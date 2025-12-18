@@ -20,9 +20,17 @@
                 <select id="movieGenre">
                     <option value="Action">Action</option><option value="Sci-Fi">Sci-Fi</option>
                     <option value="Drama">Drama</option><option value="Comedy">Comedy</option>
+                    <option value="Horror">Horror</option><option value="Romance">Romance</option>
                 </select>
-                <label>Year</label>
+
+                <label>Release Year</label>
                 <input type="number" id="movieYear" value="2024">
+
+                <label>Projected Popularity (Rating Count)</label>
+                <input type="range" id="moviePop" min="10" max="100000" value="5000" 
+                       oninput="document.getElementById('pVal').innerText = this.value">
+                <p style="text-align: right; font-size: 0.8rem; color: var(--accent);"><span id="pVal">5000</span> ratings</p>
+
                 <button onclick="calculateAI()">RUN CONTENT INFERENCE</button>
             </div>
             <div id="results" class="result-card" style="display: none;">
@@ -35,11 +43,12 @@
 
         <div class="card-section">
             <h2>👤 Personalized User Picks (SVD)</h2>
+            <p style="font-size: 0.9rem; color: #94a3b8;">Enter a User ID from 1 to 610 to see unique recommendations.</p>
             <div class="input-group" style="display: flex; gap: 10px;">
-                <input type="number" id="userId" placeholder="Enter User ID (1-610)" style="margin: 0;">
+                <input type="number" id="userId" placeholder="User ID" style="margin: 0; flex: 1;">
                 <button onclick="fetchPersonalized()" style="width: auto;">GET MY TOP PICKS</button>
             </div>
-            <div id="userResults" class="movie-grid"></div>
+            <div id="userResults" class="movie-grid" style="margin-top: 20px;"></div>
         </div>
     </div>
 </body>

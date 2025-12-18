@@ -35,13 +35,16 @@ def home():
 def recommend_page():
     return render_template('recommendations.html')
 
-# --- Feature 1: Content-Based Prediction (For New Content) ---
+# --- Feature 1: Content-Based Prediction (Restored Popularity) ---
 @app.route('/api/predict', methods=['POST'])
 def predict_rating():
     data = request.json
     input_df = pd.DataFrame(0.0, index=[0], columns=cols)
+    
+    # Map inputs to model features
     input_df['release_year'] = float(data.get('year', 2024))
     input_df['rating_count'] = float(data.get('popularity', 5000))
+    
     genre = data.get('genre')
     if genre in cols:
         input_df[genre] = 1.0
@@ -58,22 +61,25 @@ def predict_rating():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-# --- Feature 2: Collaborative Filtering (For User Picks) ---
+# --- Feature 2: Collaborative Filtering (Fixed for Unique Recommendations) ---
 @app.route('/api/user-recommend/<user_id>')
 def get_user_picks(user_id):
     if not svd_model or movies_df is None:
         return jsonify({"error": "SVD Model not loaded"}), 500
     
     try:
-        # Sample a few diverse movies to recommend from
-        # We'll take the first 1000 movies from the CSV for speed
-        sample_movies = movies_df.head(1000)
+        # Convert user_id to int because Surprise usually trains on integers
+        uid = int(user_id)
+        
+        # We'll take a sample of 1000 movies to find the best ones
+        sample_movies = movies_df.sample(min(1000, len(movies_df)))
         
         predictions = []
         for _, row in sample_movies.iterrows():
-            m_id = row['movieId']
-            # SVD Prediction
-            pred = svd_model.predict(str(user_id), str(m_id))
+            m_id = int(row['movieId'])
+            # SVD Prediction - passing the integer ID
+            pred = svd_model.predict(uid, m_id)
+            
             predictions.append({
                 "title": row['title'],
                 "score": round(pred.est, 2),
@@ -84,7 +90,19 @@ def get_user_picks(user_id):
         predictions.sort(key=lambda x: x['score'], reverse=True)
         return jsonify(predictions[:5])
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        # Fallback for string IDs if the model was trained on strings
+        print(f"Retry with string IDs due to: {e}")
+        try:
+            predictions = []
+            for _, row in movies_df.head(500).iterrows():
+                pred = svd_model.predict(str(user_id), str(row['movieId']))
+                predictions.append({
+                    "title": row['title'], "score": round(pred.est, 2), "genres": row['genres']
+                })
+            predictions.sort(key=lambda x: x['score'], reverse=True)
+            return jsonify(predictions[:5])
+        except:
+            return jsonify({"error": "Failed to generate personalized picks"}), 400
 
 if __name__ == '__main__':
     app.run(debug=True)
