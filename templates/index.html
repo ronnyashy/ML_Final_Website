@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MovieAnalytics AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='movie.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <h2 style="color: var(--accent);">MovieAnalytics AI</h2>
+        <div>
+            <a href="/">Home</a>
+            <a href="/recommend">Predictor</a>
+        </div>
+    </nav>
+    <div class="dashboard-container" style="text-align: center; padding-top: 100px;">
+        <h1 style="font-size: 3rem;">Predict Movie Success with AI</h1>
+        <p style="color: #94a3b8;">Leveraging Ridge Regression models trained on 1,151 unique content features.</p>
+        <br>
+        <a href="/recommend" style="background: var(--accent); color: var(--bg); padding: 15px 40px; border-radius: 8px; font-weight: bold; text-decoration: none;">Launch AI Predictor</a>
+    </div>
+</body>
+</html>

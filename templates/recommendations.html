@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Success Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='movie.css') }}">
+    <script defer src="{{ url_for('static', filename='app.js') }}"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <h2 style="color: var(--accent);">MovieAnalytics AI</h2>
+        <div><a href="/">Home</a><a href="/recommend">Predictor</a></div>
+    </nav>
+
+    <div class="dashboard-container">
+        <h2>🎥 Performance Predictor</h2>
+        <div class="input-group">
+            <label>Release Year</label>
+            <input type="number" id="movieYear" value="2024">
+
+            <label>Popularity Projection (Rating Count)</label>
+            <input type="range" id="moviePop" min="1" max="100000" value="5000" 
+                   oninput="document.getElementById('pVal').innerText = this.value">
+            <p style="text-align: right; font-size: 0.8rem; color: var(--accent);"><span id="pVal">5000</span> ratings</p>
+
+            <label>Primary Genre Category</label>
+            <select id="movieGenre">
+                <option value="Action">Action</option>
+                <option value="Adventure">Adventure</option>
+                <option value="Animation">Animation</option>
+                <option value="Children">Children</option>
+                <option value="Comedy">Comedy</option>
+                <option value="Crime">Crime</option>
+                <option value="Documentary">Documentary</option>
+                <option value="Drama">Drama</option>
+                <option value="Fantasy">Fantasy</option>
+                <option value="Film-Noir">Film-Noir</option>
+                <option value="Horror">Horror</option>
+                <option value="IMAX">IMAX</option>
+                <option value="Musical">Musical</option>
+                <option value="Mystery">Mystery</option>
+                <option value="Romance">Romance</option>
+                <option value="Sci-Fi">Sci-Fi</option>
+                <option value="Thriller">Thriller</option>
+                <option value="War">War</option>
+                <option value="Western">Western</option>
+            </select>
+
+            <button onclick="calculateAI()">RUN INFERENCE ENGINE</button>
+        </div>
+
+        <div id="results" class="result-card" style="display: none;">
+            <p style="text-transform: uppercase; letter-spacing: 2px;">Predicted Rating Score</p>
+            <div class="rating-score" id="score">0.0</div>
+            <p id="impact" class="badge">--</p>
+            <p style="margin-top: 20px; font-size: 0.8rem; color: #64748b;">Engine: Ridge Regressor | Feature Vector: 1151-Dim</p>
+        </div>
+    </div>
+</body>
+</html>
